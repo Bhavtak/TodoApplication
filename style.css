@@ -1,0 +1,123 @@
+:root {
+    --body-background: beige;
+    --button-primary: #5cabff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--body-background);
+}
+
+.container {
+    margin: 10px auto;
+    padding: 20px;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+    max-width: 700px;
+    background-color: white;
+    border-radius: 5px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#todoInput {
+    width: 75%;
+    padding: 10px;
+    margin-right: 25px;
+    border: 1.5px solid #ddd;
+    border-radius: 5px;
+}
+
+#addTodo {
+    padding: 10px 20px;
+    background-color: var(--button-primary);
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+ol {
+    list-style-type: none;
+    margin-top: 20px;
+}
+
+li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 2px solid #ddd;
+}
+
+li:last-child {
+    border-bottom: none;
+}
+
+li:hover {
+    background-color: aliceblue;
+}
+
+.tab-container {
+    border-bottom: 2px solid #ddd;
+    display: flex;
+    justify-content: left;
+    margin: 15px 0;
+    background-color: white;
+}
+
+.tab-buttons {
+    padding: 10px 15px;
+    background-color: transparent;
+    color: #666;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.tab-buttons:hover {
+    color: #333;
+}
+
+.tab-buttons.active {
+    background-color: #d4f1e4;
+    color: #006b3d;
+    border-bottom-color: #006b3d;
+    font-weight: bold;
+}
+
+.todoItem {
+    letter-spacing: 1px;
+}
+
+.editbtn, .deletebtn, .completebtn {
+    padding: 5px 10px;
+    background-color: transparent;
+    border: none; 
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.editbtn {
+    background-color: #ffd700;
+}
+
+.deletebtn {
+    background-color: #ff4d4d;
+}
+
+.completebtn {
+    background-color: #28a745;
+}
+
