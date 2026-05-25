@@ -59,7 +59,11 @@ function appendtodoInHtml (todo) {
     editbtn.classList.add("editbtn");
 
     const completebtn = document.createElement("button");
-    completebtn.textContent = "Complete";
+    if(todo.isCompleted == false){
+        completebtn.textContent = "Complete";
+    }else{
+        completebtn.textContent = "Undo";
+    }
     completebtn.classList.add("completebtn");
 
     //BUTTON DIV
@@ -81,14 +85,9 @@ function appendtodoInHtml (todo) {
      
 }
 
-function addTodoToLocalStorage(todoText) {
-    const todo = loadTodos();
+function addTodoToLocalStorage(todoItem) {
 
-    const todoItem = {
-            name : todoText,
-            isCompleted : false,
-            id : todo.length
-        }
+    const todo = loadTodos();
     todo.push(todoItem);
     localStorage.setItem("todo", JSON.stringify(todo));
 
@@ -107,7 +106,7 @@ function executeFilterAction(event){
 
 function executeCompletedAction(event) {
 
-    const todoItem = event.target.parentElement.parentElement;
+    const todoItem = event.target.closest("li");
     const dataId = todoItem.getAttribute('data-id');
     const todo = loadTodos();
     todo.forEach((item) => {
@@ -124,20 +123,73 @@ function executeCompletedAction(event) {
 }
 
 function executeDeleteAction(event) {
-    const todoItem = event.target.parentElement.parentElement;
-    const dataId = todoItem.getAttribute('data-id');
+
+    const todoItem = event.target.closest("li");
+    const dataId = Number(todoItem.getAttribute('data-id'));
     const todo = loadTodos();
-    todo.forEach((item) => {
-        if(item.id == dataId){
-            item.isCompleted = !item.isCompleted;
-        }
-    });
-    localStorage.setItem("todo", JSON.stringify(todo));
+    const updatedTodo = todo.filter(todo => todo.id !== dataId);
+    localStorage.setItem("todo", JSON.stringify(updatedTodo));
     
     const activeTab = document.querySelector(".active");
     const tab = activeTab.getAttribute("data-tab");
     refreshTodo(tab);
     
+}
+
+function executeEditAction(event) {
+
+    const todoItem = event.target.closest("li");
+    const dataId = Number(todoItem.getAttribute('data-id'));
+    const span = todoItem.querySelector("span");
+    const oldText  = span.textContent;
+
+    span.contentEditable = true;
+    span.focus();
+
+    // TEXT SELECT KARO
+    const range = document.createRange();
+    range.selectNodeContents(span);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+
+    //SAVE FUNCTION
+    function saveChanges() {
+
+        const todo = loadTodos();
+        const updatedText = span.textContent;
+        span.contentEditable = false;
+
+        todo.forEach((item) => {
+            if(item.id == dataId){
+                item.name = updatedText;
+            }
+        });
+
+        localStorage.setItem("todo", JSON.stringify(todo));
+    }
+
+    //PRESS ENTER OR ESCAPE EVENT
+    span.onkeydown = (event) => {
+        
+        if(event.key == "Enter"){
+
+            event.preventDefault();
+            saveChanges();
+            span.blur();
+
+        }else if(event.key == "Escape"){
+
+            span.contentEditable = false;
+            span.textContent = oldText;
+            span.blur();
+
+        }
+        
+    }
+
+    span.addEventListener("blur", saveChanges);
+
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -165,12 +217,12 @@ document.addEventListener("DOMContentLoaded", () => {
             executeCompletedAction(event);
 
         }else if(event.target.className == "deletebtn"){
-
-            console.log("Delete Button");
+            
+            executeDeleteAction(event);
             
         }else if(event.target.className == "editbtn"){
 
-            console.log("Delete Button");
+            executeEditAction(event);
             
         }
         
@@ -182,12 +234,6 @@ document.addEventListener("DOMContentLoaded", () => {
     
     }
 
-    // for(let btn of completedBtns) {
-
-    //     btn.addEventListener("click", executeCompletedAction); 
-    
-    // }
-
     submitButton.addEventListener("click", () => {
 
         if(todoInput.value == '') {
@@ -196,8 +242,8 @@ document.addEventListener("DOMContentLoaded", () => {
  
         }else {
             
-            let id = loadTodos().length;
-            addTodoToLocalStorage(todoInput.value);
+            let id = Date.now();
+            addTodoToLocalStorage({name : todoInput.value, isCompleted : false, id : id});
             appendtodoInHtml({name : todoInput.value, isCompleted : false, id : id});
             todoInput.value = '';
         }
